@@ -15,9 +15,9 @@ const navigation = [
 	{ name: "Need Blood", href: "/need-blood", secondLast: true },
 	{ name: "Donate Blood", href: "/donate-blood", last: true },
 ];
-// const logoUrl = "../public/HemoCell Logo black.png";
-// const logoUrlWhite = "../public/HemoCell Logo White.png";
-const compnayName = "HemoCell Blood Bank";
+// const logoUrl = "../public/Koshika Logo black.png";
+// const logoUrlWhite = "../public/Koshika Logo White.png";
+const compnayName = "Koshika Blood Bank";
 
 const HeaderComponent = () => {
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
