@@ -1,6 +1,8 @@
 import { useState } from "react";
 import "./form-component-styles.scss";
 import WrapperSection from "../wrapper-section/wrapper-section-component";
+import { db } from '../../../firebase/config';
+import { ref, push } from 'firebase/database';
 
 const FormComponent = ({
 	fields,
@@ -12,6 +14,35 @@ const FormComponent = ({
 }) => {
 	const [status, setStatus] = useState("Pending");
 	const inputStyles = `block w-full flex justify-start items-start rounded-rsm border-0 px-8 py-3 md:px-10 md:py-4 bg-light text-white ring-none placeholder:text-white outline-none focus:ring-1 focus:ring-center focus:bg-dark focus:ring-light sm:text-sm sm:leading-6`;
+
+	const handleFormSubmit = async (e) => {
+		e.preventDefault();
+		try {
+			// Create a reference to the 'contacts' collection in Firebase
+			const contactsRef = ref(db, 'contacts');
+			
+			// Add timestamp to the form data
+			const dataToSubmit = {
+				...formData,
+				timestamp: new Date().toISOString()
+			};
+
+			// Push the data to Firebase
+			await push(contactsRef, dataToSubmit);
+			
+			// Clear the form
+			setFormData({
+				...Object.fromEntries(fields.map(field => [field.name, ''])),
+				message: ''
+			});
+			
+			setStatus("Submited");
+		} catch (error) {
+			console.error("Error submitting form:", error);
+			alert("There was an error submitting the form. Please try again.");
+		}
+	};
+
 	return (
 		<WrapperSection>
 			<div
@@ -29,7 +60,7 @@ const FormComponent = ({
 					<form
 						className="contact-form grid grid-cols-1 sm:grid-cols-2 gap-5 w-full relative sm:p-6 py-8 sm:p-10 rounded-rmd z-[25] overflow-hidden"
 						// method="POST"
-						onSubmit={handleSubmit}
+						onSubmit={handleFormSubmit}
 					>
 						{fields.map((field, index) => (
 							<input
@@ -70,11 +101,7 @@ const FormComponent = ({
 							<button
 								type="submit"
 								name="submit"
-								onClick={(e) => {
-									handleSubmit(e);
-									setStatus("Submited");
-								}}
-								className={` rounded-rsm border border-white hover:border-red text-dark bg-white hover:bg-red hover:text-white transition px-10 py-4 text-sm w-fit font-bold w-fit cursor-pointer`}
+								className={`rounded-rsm border border-white hover:border-red text-dark bg-white hover:bg-red hover:text-white transition px-10 py-4 text-sm w-fit font-bold cursor-pointer`}
 							>
 								{buttonText}
 							</button>
